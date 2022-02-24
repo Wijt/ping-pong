@@ -10,7 +10,7 @@ function setup() {
     createCanvas(innerWidth, innerHeight);
     court = new Court(innerHeight*0.6, 5, 0, 0, "#ffffff");
 
-    ball = new Ball(innerWidth/2+100, innerHeight/2, 20, "#B3F2F2");
+    ball = new Ball(innerWidth/2+100, innerHeight/2, 20, 15, "#B3F2F2");
 
     playerOne = new Player(250, 20, (innerWidth*0.10), innerHeight/2-250/2, "#ffffff", 87, 83, 10);
     playerTwo = new Player(250, 20, innerWidth-(innerWidth*0.10), innerHeight/2-250/2, "#ffffff", 38, 40, 10);
@@ -20,7 +20,13 @@ function setup() {
             pos: playerOne.pos,
             width: playerOne.width,
             height: playerOne.height,
-            hitEffect: (ball)=>{return createVector(-ball.vel.x, ball.vel.y);}
+            hitEffect: (ball)=>{
+                let diff = ball.pos.y - playerOne.pos.y;
+                let rad = radians(45);
+                let angle = map(diff, 0, playerOne.height, -rad, rad);
+                ball.vel = createVector(ball.speed * cos(angle), ball.speed * sin(angle));
+                ball.pos.x = playerOne.pos.x + playerOne.width + ball.radius;
+            }
         }
     );
     collisionList.push(
@@ -28,7 +34,12 @@ function setup() {
             pos: playerTwo.pos,
             width: playerTwo.width,
             height: playerTwo.height,
-            hitEffect: (ball)=>{return ball.vel.mult(createVector(-1, 1));}
+            hitEffect: (ball)=>{
+                let diff = ball.pos.y - playerTwo.pos.y;
+                let angle = map(diff, 0, playerTwo.height, radians(225), radians(135));
+                ball.vel = createVector(ball.speed * cos(angle), ball.speed * sin(angle));
+                ball.pos.x = playerTwo.pos.x - ball.radius;
+            }
         }
     );
     collisionList.push(
@@ -36,7 +47,7 @@ function setup() {
             pos: createVector(0, 0),
             width: 10,
             height: innerHeight,
-            hitEffect: (ball)=>{return ball.vel.mult(createVector(-1, 1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1));}
         }
     ); //Left Wall;
     collisionList.push(
@@ -44,7 +55,7 @@ function setup() {
             pos: createVector(0, 0),
             width: innerWidth,
             height: 10,
-            hitEffect: (ball)=>{return ball.vel.mult(createVector(1, -1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(1, -1));}
         }
     ); //Top Wall;
     collisionList.push(
@@ -52,7 +63,7 @@ function setup() {
             pos: createVector(innerWidth, 0),
             width: -10,
             height: innerHeight,
-            hitEffect: (ball)=>{return ball.vel.mult(createVector(-1, 1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1));}
         }
     ); //Right Wall;
     collisionList.push(
@@ -60,7 +71,7 @@ function setup() {
             pos: createVector(0, innerHeight),
             width: innerWidth,
             height: -10,
-            hitEffect: (ball)=>{return ball.vel.mult(createVector(1, -1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(1, -1));}
         }
     ); //Bottom Wall;
 }

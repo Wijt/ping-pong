@@ -1,9 +1,10 @@
 class Ball {
-    constructor(startX, startY, radius, color) {
+    constructor(startX, startY, radius, speed, color) {
         this.radius = radius;
         this.color = color;
         this.pos = createVector(startX, startY);
-        this.vel = createVector(5, 5);
+        this.speed = speed;
+        this.vel = createVector(speed, 0);
     }
 
     show(){
@@ -23,7 +24,7 @@ class Ball {
         for (let i = 0; i < others.length; i++) {
             let o = others[i];
             if (circRect(this.pos.x,this.pos.y,this.radius,o.pos.x,o.pos.y,o.width,o.height)) {
-                this.vel = o.hitEffect(this);
+                o.hitEffect(this);
             }
         }
     }
