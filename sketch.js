@@ -10,10 +10,12 @@ function setup() {
     createCanvas(innerWidth, innerHeight);
     court = new Court(innerHeight*0.6, 5, 0, 0, "#ffffff");
 
-    ball = new Ball(innerWidth/2+100, innerHeight/2, 20, 15, "#B3F2F2");
+    ball = new Ball(innerWidth/2+100, innerHeight/2, 20, 20, "#B3F2F2");
 
     playerOne = new Player(250, 20, (innerWidth*0.10), innerHeight/2-250/2, "#ffffff", 87, 83, 10);
     playerTwo = new Player(250, 20, innerWidth-(innerWidth*0.10), innerHeight/2-250/2, "#ffffff", 38, 40, 10);
+
+    shootBall(Math.random() < 0.5 ? -1 : 1);
 
     collisionList.push(
         {
@@ -47,7 +49,7 @@ function setup() {
             pos: createVector(0, 0),
             width: 10,
             height: innerHeight,
-            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1)); playerTwo.score+=1; shootBall(1); restart();}
         }
     ); //Left Wall;
     collisionList.push(
@@ -63,7 +65,7 @@ function setup() {
             pos: createVector(innerWidth, 0),
             width: -10,
             height: innerHeight,
-            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1));}
+            hitEffect: (ball)=>{ball.vel.mult(createVector(-1, 1)); playerOne.score+=1; shootBall(-1); restart();}
         }
     ); //Right Wall;
     collisionList.push(
@@ -89,6 +91,11 @@ function draw() {
     playerTwo.show();
     playerTwo.update();
 
+    fill(color("white"));
+    textSize(100);
+    textAlign(CENTER, CENTER)
+    text(playerOne.score, innerWidth/2-200, innerHeight*0.15);
+    text(playerTwo.score, innerWidth/2+200, innerHeight*0.15);
     /*
     for (let i = 0; i < collisionList.length; i++) { //Show Collider
         a = collisionList[i];
@@ -98,4 +105,14 @@ function draw() {
             rect(a.pos.x, a.pos.y, a.width, a.height);
         pop();
     }*/
+}
+
+function shootBall(direction){
+    ball.vel = createVector(ball.speed * direction, 0);
+}
+
+function restart(){
+    ball.pos = createVector(innerWidth/2, innerHeight/2);
+    playerOne.pos.set(innerWidth*0.10, innerHeight/2-250/2);
+    playerTwo.pos.set(innerWidth-(innerWidth*0.10), innerHeight/2-250/2);
 }

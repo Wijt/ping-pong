@@ -8,6 +8,8 @@ class Player {
         this.upKey = upKey;
         this.downKey = downKey;
         this.speed = speed;
+
+        this.score = 0;
     }
 
     show(){
