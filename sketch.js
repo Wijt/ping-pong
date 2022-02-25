@@ -49,7 +49,7 @@ function setup() {
             pos: createVector(0, 0),
             width: 10,
             height: innerHeight,
-            hitEffect: (ball)=>{playerTwo.score+=1; shootBall(1); restart();}
+            hitEffect: (ball)=>{playerTwo.score+=1; shootBall(-1); restart();}
         }
     ); //Left Wall;
     collisionList.push(
@@ -65,7 +65,7 @@ function setup() {
             pos: createVector(innerWidth, 0),
             width: -10,
             height: innerHeight,
-            hitEffect: (ball)=>{playerOne.score+=1; shootBall(-1); restart();}
+            hitEffect: (ball)=>{playerOne.score+=1; shootBall(1); restart();}
         }
     ); //Right Wall;
     collisionList.push(
