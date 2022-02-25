@@ -3,6 +3,7 @@ var playerTwo;
 var court;
 var ball;
 
+var gamePaused = false;
 
 collisionList=[];
 
@@ -83,13 +84,8 @@ function draw() {
     background(color("#0A1119"));
     court.show();
     ball.show();
-    ball.update(collisionList);
-
     playerOne.show();
-    playerOne.update();
-
     playerTwo.show();
-    playerTwo.update();
 
     fill(color("white"));
     textSize(100);
@@ -97,6 +93,27 @@ function draw() {
     text(playerOne.score, innerWidth/2-200, innerHeight*0.15);
     text(playerTwo.score, innerWidth/2+200, innerHeight*0.15);
     
+
+    if(gamePaused){
+        push();
+            rectMode(CORNER);
+            fill(0, 0, 0, 200);
+            rect(0, 0, innerWidth, innerHeight);
+            rectMode(CENTER);
+            fill(color("white"));
+            rect(innerWidth/2, innerHeight/2, 200, 200, 20);
+            fill(color("black"));
+            rect(innerWidth/2-25, innerHeight/2, 25 , 75);
+            fill(color("black"));
+            rect(innerWidth/2+25, innerHeight/2, 25, 75);
+        pop();
+    }
+
+    if(gamePaused) return;
+    playerOne.update();
+    playerTwo.update();
+    ball.update(collisionList);
+
     /*for (let i = 0; i < collisionList.length; i++) { //Show Collider
         a = collisionList[i];
         push();
@@ -116,4 +133,8 @@ function shootBall(direction){
 function restart(){
     playerOne.pos.set(innerWidth*0.10, innerHeight/2-250/2);
     playerTwo.pos.set(innerWidth-(innerWidth*0.10), innerHeight/2-250/2);
+}
+
+function keyPressed(){
+    if(key == "p") gamePaused = !gamePaused;
 }
