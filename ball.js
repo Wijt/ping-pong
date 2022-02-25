@@ -5,6 +5,8 @@ class Ball {
         this.pos = createVector(startX, startY);
         this.speed = speed;
         this.vel = createVector(speed, 0);
+
+        this.waitFor = null;
     }
 
     show(){
@@ -16,8 +18,14 @@ class Ball {
     }
 
     update(collisionList){
+        if(this.waitFor) {
+            if(keyIsDown(this.waitFor.upKey)||keyIsDown(this.waitFor.downKey)) {
+                this.waitFor = null;
+            }
+            return;
+        }
         this.collide(collisionList);
-        this.pos.add(this.vel);	
+        this.pos.add(this.vel);
     }
 
     collide(others) {
