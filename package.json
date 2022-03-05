@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/Wijt/ping-pong/issues"
   },
-  "homepage": "https://github.com/Wijt/ping-pong#readme"
+  "homepage": "https://github.com/Wijt/ping-pong#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
