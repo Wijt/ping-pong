@@ -1,0 +1,27 @@
+{
+  "name": "ping-pong",
+  "version": "1.0.0",
+  "description": "a multiplayer pong game attempt",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wijt/ping-pong.git"
+  },
+  "keywords": [
+    "pong",
+    "ping-pong",
+    "p5.js",
+    "multiplayer",
+    "socket.io",
+    "game"
+  ],
+  "author": "Furkan Kaya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wijt/ping-pong/issues"
+  },
+  "homepage": "https://github.com/Wijt/ping-pong#readme"
+}
