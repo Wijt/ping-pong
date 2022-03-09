@@ -9,7 +9,7 @@ class Court {
 
     show(){
         push();
-            translate(innerWidth / 2, innerHeight / 2);
+            translate(sceneSize.w / 2, sceneSize.h / 2);
             rectMode(CENTER);
             fill(color(this.color));
             rect(this.x, this.y, this.width, this.height, 20);

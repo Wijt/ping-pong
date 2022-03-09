@@ -1,6 +1,7 @@
 class Player {
     constructor(height, width, x, y, color, upKey, downKey, speed) {
         this.height = height;
+
         this.width = width;
         this.color = color;
         this.pos = createVector(x, y);
