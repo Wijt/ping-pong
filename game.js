@@ -10,6 +10,7 @@ class Player {
         this.score = 0;
 
         this.roomsize = roomsize;
+        this.ready = false;
     }
 
     up() {
@@ -217,13 +218,18 @@ class Room {
             },
         ];
         this.shootBall(Math.random() < 0.5 ? -1 : 1);
+        this.gameState = "started";
     }
 
     update() {
         if (this.gameState == "not started") {
             if (Object.keys(this.players).length == 2) {
-                this.gameState = "starting";
-                this.start();
+                if (
+                    Object.values(this.players)[0].ready &&
+                    Object.values(this.players)[1].ready
+                ) {
+                    this.start();
+                }
             }
             return;
         }

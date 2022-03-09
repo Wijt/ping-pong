@@ -4,7 +4,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { instrument } = require("@socket.io/admin-ui");
 
-const { Room, Player } = require("./handlers.js");
+const { Room, Player } = require("./game.js");
 
 const app = express();
 const httpServer = createServer(app);
@@ -33,11 +33,6 @@ setInterval(() => {
     for (k in rooms) {
         rooms[k].update();
         io.to(rooms[k].id).emit("sync", rooms[k]);
-        try {
-            console.log(Object.values(rooms[k].players)[0].score);
-        } catch (error) {
-
-        }
     }
 }, 10);
 
@@ -78,20 +73,26 @@ io.on("connection", (socket) => {
     });
 
     socket.on("upkey", () => {
-        if(rooms[socket.roomid].players[socket.id]!=null){
+        if (rooms[socket.roomid].players[socket.id] != null) {
             rooms[socket.roomid].players[socket.id].up();
         }
     });
 
     socket.on("pause", () => {
-        if(rooms[socket.roomid] != null){
+        if (rooms[socket.roomid] != null) {
             rooms[socket.roomid].gamePaused = !rooms[socket.roomid].gamePaused;
         }
     });
 
     socket.on("downkey", () => {
-        if(rooms[socket.roomid].players[socket.id]!=null){
+        if (rooms[socket.roomid].players[socket.id] != null) {
             rooms[socket.roomid].players[socket.id].down();
+        }
+    });
+
+    socket.on("ready", () => {
+        if (rooms[socket.roomid].players[socket.id] != null) {
+            rooms[socket.roomid].players[socket.id].ready = true;
         }
     });
 });

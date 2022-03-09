@@ -35,13 +35,12 @@ var ball;
 
 var gamePaused = false;
 
-collisionList = [];
+var isPlayerOneReady = false;
+var isPlayerTwoReady = false;
+
+var gameState = "";
 
 function setup() {
-    gameSetup();
-}
-
-function gameSetup() {
     createCanvas(sceneSize.w, sceneSize.h);
     court = new Court(sceneSize.h * 0.6, 5, 0, 0, "#ffffff");
 
@@ -75,14 +74,17 @@ function sync(r) {
 
     playerOne.pos = Object.values(r.players)[0].pos;
     playerOne.score = Object.values(r.players)[0].score;
+    isPlayerOneReady = Object.values(r.players)[0].ready;
 
     if (Object.values(r.players)[1] != null) {
         playerTwo.pos = Object.values(r.players)[1].pos;
         playerTwo.score = Object.values(r.players)[1].score;
-    }
+        isPlayerTwoReady = Object.values(r.players)[1].ready;
+}
 
     gamePaused = r.gamePaused;
     collisionList = r.collisionList;
+    gameState = r.gameState;
 }
 
 function draw() {
@@ -97,19 +99,47 @@ function draw() {
     textAlign(CENTER, CENTER);
     text(playerOne.score, sceneSize.w / 2 - 200, sceneSize.h * 0.15);
     text(playerTwo.score, sceneSize.w / 2 + 200, sceneSize.h * 0.15);
+    
+    if(debug){
+        textSize(25);
+        text(gameState, sceneSize.w / 2, sceneSize.h * 0.15);
+    }
+   
+    if (!isPlayerOneReady) {
+        push();
+        rectMode(CORNER);
+        fill(0, 0, 0, 200);
+        rect(0, 0, sceneSize.w / 2, sceneSize.h);
+        textAlign(CENTER, CENTER);
+        textSize(45);
+        fill(color("white"));
+        text("press\nR\nto be ready", sceneSize.w / 4, sceneSize.h / 2);
+        pop();
+    }
+    if (!isPlayerTwoReady) {
+        push();
+        rectMode(CORNER);
+        fill(0, 0, 0, 200);
+        rect(sceneSize.w / 2, 0, sceneSize.h, sceneSize.w);
+        textAlign(CENTER, CENTER);
+        textSize(45);
+        fill(color("white"));
+        text("press\nR\nto be ready", sceneSize.w / 4*3, sceneSize.h / 2);
+        pop();
+    }
 
     if (gamePaused) {
         push();
-            rectMode(CORNER);
-            fill(0, 0, 0, 200);
-            rect(0, 0, sceneSize.w, sceneSize.h);
-            rectMode(CENTER);
-            fill(color("white"));
-            rect(sceneSize.w / 2, sceneSize.h / 2, 200, 200, 20);
-            fill(color("black"));
-            rect(sceneSize.w / 2 - 25, sceneSize.h / 2, 25, 75);
-            fill(color("black"));
-            rect(sceneSize.w / 2 + 25, sceneSize.h / 2, 25, 75);
+        rectMode(CORNER);
+        fill(0, 0, 0, 200);
+        rect(0, 0, sceneSize.w, sceneSize.h);
+        rectMode(CENTER);
+        fill(color("white"));
+        rect(sceneSize.w / 2, sceneSize.h / 2, 200, 200, 20);
+        fill(color("black"));
+        rect(sceneSize.w / 2 - 25, sceneSize.h / 2, 25, 75);
+        fill(color("black"));
+        rect(sceneSize.w / 2 + 25, sceneSize.h / 2, 25, 75);
         pop();
     }
 
@@ -137,4 +167,5 @@ function draw() {
 
 function keyPressed() {
     if (key == "p") socket.emit("pause");
+    if (key == "r") socket.emit("ready");
 }
