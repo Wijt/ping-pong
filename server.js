@@ -73,26 +73,26 @@ io.on("connection", (socket) => {
     });
 
     socket.on("upkey", () => {
-        if (rooms[socket.roomid].players[socket.id] != null) {
+        try {
             rooms[socket.roomid].players[socket.id].up();
-        }
+        }catch(error){};
     });
 
     socket.on("pause", () => {
-        if (rooms[socket.roomid] != null) {
+        try {
             rooms[socket.roomid].gamePaused = !rooms[socket.roomid].gamePaused;
-        }
+        }catch(error){};
     });
 
     socket.on("downkey", () => {
-        if (rooms[socket.roomid].players[socket.id] != null) {
+        try {
             rooms[socket.roomid].players[socket.id].down();
-        }
+        }catch(error){};
     });
 
     socket.on("ready", () => {
-        if (rooms[socket.roomid].players[socket.id] != null) {
+        try {
             rooms[socket.roomid].players[socket.id].ready = true;
-        }
+        }catch(error){};
     });
 });
