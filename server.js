@@ -31,8 +31,11 @@ var rooms = {};
 
 setInterval(() => {
     for (k in rooms) {
-        rooms[k].update();
-        io.to(rooms[k].id).emit("sync", rooms[k]);
+        if(rooms[k].canStart){
+            if(rooms[k].started)
+            rooms[k].update();
+            io.to(rooms[k].id).emit("sync", rooms[k]);
+        }
     }
 }, 10);
 
@@ -40,36 +43,64 @@ io.on("connection", (socket) => {
     console.log("a user connected " + socket.id);
 
     socket.on("create-room", () => {
-        io.to(socket.id).emit("set-id", makeid(5));
+
+        var roomid = makeid(5);
+       
+        rooms[roomid] = new Room(roomid);
+        rooms[roomid].addPlayer(new Player(socket.id));
+        
+        socket.roomid = roomid;
+        
+        socket.join(roomid);
+        io.to(socket.id).emit("room-created", roomid);
+
+        console.log("created and joined to the room " + roomid);
+
     });
 
     socket.on("join-room", (roomid) => {
-        if (!(roomid in rooms)) {
-            var room = new Room(roomid);
-            rooms[roomid] = room;
-        }
-        var result = rooms[roomid].addPlayer(
-            new Player(
-                socket.id,
-                250,
-                20,
-                rooms[roomid].size.w * 0.1,
-                rooms[roomid].size.h / 2 - 250 / 2,
-                10,
-                rooms[roomid].size
-            )
-        );
-        if (result) {
-            socket.join(roomid);
+        if(rooms[roomid]){
+            rooms[roomid].addPlayer(new Player(socket.id));
             socket.roomid = roomid;
+            socket.join(roomid);
+            
+            //get founder id from players dictionary
+            var founderId = Object.keys(rooms[roomid].players)[0];
+            console.log("Geldi knk haberin olsun ", founderId);
+            io.to(founderId).emit("opponent-connected");
             console.log("joined to the room " + roomid);
+            socket.emit("room-joined", roomid);
+        }
+       /*  if (result) {
+            if(Object.keys(rooms[socket.roomid].players).length==2) rooms[socket.roomid].canStart = true; 
             return true;
         } else {
             console.warn(
                 "there is already two players inside this room: " + roomid
             );
             return false;
+        }        */
+    });
+    
+    function calcBestSceneSize(roomid){
+        var w = 0;
+        var h = 0;
+        for(k in Object.values(rooms[roomid].playerSizes)){
+            if(k.w > w) w = k.w;
+            if(k.h > h) h = k.h;
         }
+        return {w: w, h: h};
+    }
+
+    socket.on("my-size", (size) => {
+        rooms[socket.roomid].playerSizes[socket.id] = size;
+
+        if(Object.keys(rooms[socket.roomid].playerSizes).length >= 2){
+            var bestSize = calcBestSceneSize(socket.roomid);
+            io.to(socket.roomid).emit("start-game", bestSize);
+            rooms[socket.roomid].size = bestSize;
+        }
+
     });
 
     socket.on("upkey", () => {
