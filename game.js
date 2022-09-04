@@ -1,15 +1,15 @@
 class Player {
-    constructor(id, height, width, x, y, speed, roomsize) {
+    constructor(id) {
         this.id = id;
-        this.height = height;
-        this.width = width;
+        this.height = 0;
+        this.width = 20;
 
-        this.pos = { x: x, y: y };
-        this.speed = speed;
+        this.pos = {x:0, y:0};
+        this.speed = 10;
 
         this.score = 0;
 
-        this.roomsize = roomsize;
+        this.roomsize = {x:0, y:0};
         this.ready = false;
     }
 
@@ -102,28 +102,20 @@ class Room {
     constructor(id) {
         this.id = id;
         this.players = {};
-        this.size = { w: 1000, h: 700 };
-
-        this.ball = new Ball(
-            this.size.w / 2,
-            this.size.h / 2,
-            20,
-            10,
-            "#B3F2F2"
-        );
+        this.playerSizes = {};
+        this.size = { w: 0, h: 0 };
+        
+        this.ball = null;
 
         this.gameState = "not started";
         this.gamePaused = false;
 
         this.collisionList = [];
+        this.canStart = false;
     }
 
     //add player if there is a room for it
     addPlayer(player) {
-        if (Object.keys(this.players).length == 1) {
-            //second player must be on the right side
-            player.pos.x = player.roomsize.w - player.pos.x;
-        }
         if (Object.keys(this.players).length < 2) {
             this.players[player.id] = player;
             return true;
@@ -132,6 +124,22 @@ class Room {
     }
 
     start() {
+        Object.values(this.players)[0].pos = {x: this.size.w * 0.1, y: this.size.h / 2 - 250 / 2};
+        Object.values(this.players)[0].height = this.size.h * 0.20;
+        Object.values(this.players)[0].roomsize = this.size;
+
+        Object.values(this.players)[0].pos = {x: this.size.w - this.size.w * 0.1, y: this.size.h / 2 - 250 / 2};
+        Object.values(this.players)[0].height = this.size.h * 0.20;
+        Object.values(this.players)[0].roomsize = this.size;
+
+        this.ball = new Ball(
+            this.size.w / 2,
+            this.size.h / 2,
+            20,
+            13,
+            "#B3F2F2"
+        );
+
         this.collisionList = [
             {
                 pos: Object.values(this.players)[0].pos,

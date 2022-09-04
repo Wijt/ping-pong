@@ -1,74 +1,60 @@
 var socket;
 
-var debug = false;
+var debug = true;
+
+var sceneManager;
 
 function preload() {
-    socket = io();
 
-    //get roomid and join it if that is not defined ask id to the server and join it;
+    /* //get roomid and join it if that is not defined ask id to the server and join it;
     var roomid = getAllUrlParams().roomid;
 
     if (roomid == null) {
-        roomid = "";
-        socket.emit("create-room");
-        socket.on("set-id", (id) => {
-            roomid = id;
-            socket.emit("join-room", roomid);
-            window.history.pushState("", "", `?roomid=${roomid}`);
-            console.log("room created " + roomid);
-        });
+        
     } else {
-        socket.emit("join-room", roomid);
-    }
+        socket.emit("join-room", roomid, {w: innerWidth, h: innerHeight});
+        ctx["isAdmin"] = false;
+    } */
 
-    socket.on("sync", (room) => {
+    /*socket.on("sync", (room) => {
         sync(room);
-    });
+    });*/
+
+    /*socket.on("start-game", (room) => {
+        startGame(room);
+    });*/
+
+
+    //setup socket io
+    //setup all scenes
+    socket = io();
+
+    sceneManager = new SceneManager();
+    sceneManager.addScene(new WelcomeScene());
+    sceneManager.addScene(new OpponentWaiting());
+    sceneManager.addScene(new GameCreating());
+    sceneManager.addScene(new GameScene());
 }
 
-var sceneSize = { w: 1000, h: 700 };
-
-var playerOne;
-var playerTwo;
-var court;
-var ball;
-
-var gamePaused = false;
-
-var isPlayerOneReady = false;
-var isPlayerTwoReady = false;
-
-var gameState = "";
+function centerCanvas(C) {
+    let x = (innerWidth - width) / 2;
+    let y = (innerHeight - height) / 2;
+    C.position(x, y);
+}
 
 function setup() {
-    createCanvas(sceneSize.w, sceneSize.h);
-    court = new Court(sceneSize.h * 0.6, 5, 0, 0, "#ffffff");
+    //create canvas and center it
+    //start the scene manager
 
-    ball = new Ball(sceneSize.w / 2, sceneSize.h / 2, 20, 20, "#B3F2F2");
-
-    playerOne = new Player(
-        250,
-        20,
-        sceneSize.w * 0.1,
-        sceneSize.h / 2 - 250 / 2,
-        "#ffffff",
-        87,
-        83,
-        10
-    );
-    playerTwo = new Player(
-        250,
-        20,
-        sceneSize.w - sceneSize.w * 0.1,
-        sceneSize.h / 2 - 250 / 2,
-        "#ffffff",
-        38,
-        40,
-        10
-    );
+    let c = createCanvas(innerWidth, innerHeight);
+    centerCanvas(c);
+    
+    sceneManager.start();
 }
 
-function sync(r) {
+
+//this function sync the game but shouldnt be here
+/* function sync(r) {
     ball.pos = r.ball.pos;
     ball.vel = r.ball.vel;
 
@@ -80,92 +66,18 @@ function sync(r) {
         playerTwo.pos = Object.values(r.players)[1].pos;
         playerTwo.score = Object.values(r.players)[1].score;
         isPlayerTwoReady = Object.values(r.players)[1].ready;
-}
+    }
 
     gamePaused = r.gamePaused;
     collisionList = r.collisionList;
     gameState = r.gameState;
-}
+} */
 
 function draw() {
-    background(color("#0A1119"));
-    court.show();
-    ball.show();
-    playerOne.show();
-    playerTwo.show();
-
-    fill(color("white"));
-    textSize(100);
-    textAlign(CENTER, CENTER);
-    text(playerOne.score, sceneSize.w / 2 - 200, sceneSize.h * 0.15);
-    text(playerTwo.score, sceneSize.w / 2 + 200, sceneSize.h * 0.15);
-    
-    if(debug){
-        textSize(25);
-        text(gameState, sceneSize.w / 2, sceneSize.h * 0.15);
-    }
-   
-    if (!isPlayerOneReady) {
-        push();
-        rectMode(CORNER);
-        fill(0, 0, 0, 200);
-        rect(0, 0, sceneSize.w / 2, sceneSize.h);
-        textAlign(CENTER, CENTER);
-        textSize(45);
-        fill(color("white"));
-        text("press\nR\nto be ready", sceneSize.w / 4, sceneSize.h / 2);
-        pop();
-    }
-    if (!isPlayerTwoReady) {
-        push();
-        rectMode(CORNER);
-        fill(0, 0, 0, 200);
-        rect(sceneSize.w / 2, 0, sceneSize.h, sceneSize.w);
-        textAlign(CENTER, CENTER);
-        textSize(45);
-        fill(color("white"));
-        text("press\nR\nto be ready", sceneSize.w / 4*3, sceneSize.h / 2);
-        pop();
-    }
-
-    if (gamePaused) {
-        push();
-        rectMode(CORNER);
-        fill(0, 0, 0, 200);
-        rect(0, 0, sceneSize.w, sceneSize.h);
-        rectMode(CENTER);
-        fill(color("white"));
-        rect(sceneSize.w / 2, sceneSize.h / 2, 200, 200, 20);
-        fill(color("black"));
-        rect(sceneSize.w / 2 - 25, sceneSize.h / 2, 25, 75);
-        fill(color("black"));
-        rect(sceneSize.w / 2 + 25, sceneSize.h / 2, 25, 75);
-        pop();
-    }
-
-    if (gamePaused) return;
-
-    if (keyIsDown(38)) {
-        socket.emit("upkey");
-    }
-    if (keyIsDown(40)) {
-        socket.emit("downkey");
-    }
-
-    if (debug) {
-        for (let i = 0; i < collisionList.length; i++) {
-            //Show Collider
-            a = collisionList[i];
-            push();
-            fill(color("red"));
-            noStroke();
-            rect(a.pos.x, a.pos.y, a.width, a.height);
-            pop();
-        }
-    }
+    sceneManager.update();
+    sceneManager.draw();
 }
 
 function keyPressed() {
-    if (key == "p") socket.emit("pause");
-    if (key == "r") socket.emit("ready");
+    sceneManager.keyPressed(key);
 }
