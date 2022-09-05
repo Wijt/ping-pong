@@ -7,65 +7,149 @@ class GameScene extends Scene {
         this.court;
         this.ball;
 
+        this.isPlayerOneReady = false;
+        this.isPlayerTwoReady = false;
+
         this.gamePaused = false;
+
+        this.collisionList = [];
     }
 
     start(){
-        this.court = new Court(this.sceneManager.ctx["room-size"].h * 0.6, 5, 0, 0, "#ffffff", this.sceneManager.ctx);
+        let size = this.sceneManager.ctx["room-size"];
 
-        this.ball = new Ball(this.sceneManager.ctx["room-size"].w / 2, this.sceneManager.ctx["room-size"].h / 2, 20, 20, "#B3F2F2");
+        this.court = new Court(size.w * 0.5, size.h * 0.5, size.w*0.01, size.h*0.8, "#ffffff");
+
+        this.ball = new Ball(size.w * 0.5, size.h * 0.5, 20, 20, "#B3F2F2");
 
         this.playerOne = new Player(
-            this.sceneManager.ctx["room-size"].h * 0.20,
+            size.h * 0.20,
             20,
-            this.sceneManager.ctx["room-size"].w * 0.1,
-            this.sceneManager.ctx["room-size"].h / 2 - 250 / 2,
+            size.w * 0.1,
+            size.h * 0.5,
             "#ffffff",
             87,
             83,
             10
         );
         this.playerTwo = new Player(
-            this.sceneManager.ctx["room-size"].h * 0.20,
+            size.h * 0.20,
             20,
-            this.sceneManager.ctx["room-size"].w - this.sceneManager.ctx["room-size"].w * 0.1,
-            this.sceneManager.ctx["room-size"].h / 2 - 250 / 2,
-            "#ffffff",
+            size.w * 0.9,
+            size.h * 0.5,
+            "#000000",
             38,
             40,
             10
         );
+
+        socket.on("sync", (room) => {
+            this.sync(room);
+        });
+    }
+
+    sync(r) {
+        if (r.ball != null) {
+            this.ball.pos = r.ball.pos;
+            this.ball.vel = r.ball.vel;
+        }
+
+        //server works with CORNER mode so we need to convert it to CENTER mode
+
+        this.playerOne.pos = Object.values(r.players)[0].pos;
+        this.playerOne.pos.x += this.playerOne.width / 2;
+        this.playerOne.pos.y += this.playerOne.height / 2;
+
+        this.playerOne.score = Object.values(r.players)[0].score;
+        this.isPlayerOneReady = Object.values(r.players)[0].ready;
+    
+        if (Object.values(r.players)[1] != null) {
+            this.playerTwo.pos = Object.values(r.players)[1].pos;
+            this.playerTwo.pos.x += this.playerTwo.width / 2;
+            this.playerTwo.pos.y += this.playerTwo.height / 2;
+            
+            this.playerTwo.score = Object.values(r.players)[1].score;
+            this.isPlayerTwoReady = Object.values(r.players)[1].ready;
+        }
+    
+        this.gamePaused = r.gamePaused;
+        this.collisionList = r.collisionList;
+
+        //console.log(r);
     }
 
     update(){
         super.update();
+
     }
 
     draw(){
         background(color("#0A1119"));
+
+        let size = this.sceneManager.ctx["room-size"];
+
+        //this makes the game room centered
+        //in the server, there is no center point only common point is the 0,0
+        translate(center.x - size.w / 2, center.y - size.h / 2);
+
+       /*  if(debug){
+            push();
+                fill(color("#f21827"));
+                //stroke(color("#f21827"));
+                rect(0, 0, size.w, size.h);
+            pop();
+        } */
+
         this.court.show();
         this.ball.show();
         this.playerOne.show();
         this.playerTwo.show();
-    
-        fill(color("white"));
-        textSize(100);
-        textAlign(CENTER, CENTER);
-        text(this.playerOne.score, this.sceneManager.ctx["room-size"].w / 2 - 200, this.sceneManager.ctx["room-size"].h * 0.15);
-        text(this.playerTwo.score, this.sceneManager.ctx["room-size"].w / 2 + 200, this.sceneManager.ctx["room-size"].h * 0.15);
-    
+        
+        push();
+            fill(color("white"));
+            textSize(100);
+            textAlign(CENTER, CENTER);
+            text(this.playerOne.score, size.w * 0.25, size.h * 0.2);
+            text(this.playerTwo.score, size.w * 0.75, size.h * 0.2);
+        pop();
+
+        if (!this.isPlayerOneReady) {
+            push();
+            noStroke();
+            rectMode(CENTER);
+            fill(0, 0, 0, 200);
+            rect(size.w * 0.25, size.h / 2, size.w / 2, size.h);
+            textAlign(CENTER, CENTER);
+            textSize(45);
+            fill(color("white"));
+            text("press\nR\nto be ready",  size.w * 0.25, size.h / 2);
+            pop();
+        }
+        if (!this.isPlayerTwoReady) {
+            push();
+            noStroke();
+            rectMode(CENTER);
+            fill(0, 0, 0, 200);
+            rect(size.w * 0.75, size.h / 2, size.w / 2, size.h);
+            textAlign(CENTER, CENTER);
+            textSize(45);
+            fill(color("white"));
+            text("press\nR\nto be ready", size.w * 0.75, size.h / 2);
+            pop();
+        }
+
         if (this.gamePaused) {
             push();
-            rectMode(CORNER);
-            fill(0, 0, 0, 200);
-            rect(0, 0, this.sceneManager.ctx["room-size"].w, this.sceneManager.ctx["room-size"].h);
-            rectMode(CENTER);
-            fill(color("white"));
-            rect(this.sceneManager.ctx["room-size"].w / 2, this.sceneManager.ctx["room-size"].h / 2, 200, 200, 20);
-            fill(color("black"));
-            rect(this.sceneManager.ctx["room-size"].w / 2 - 25, this.sceneManager.ctx["room-size"].h / 2, 25, 75);
-            fill(color("black"));
-            rect(this.sceneManager.ctx["room-size"].w / 2 + 25, this.sceneManager.ctx["room-size"].h / 2, 25, 75);
+                rectMode(CORNER);
+                fill(0, 0, 0, 200);
+                rect(0, 0, size.w, size.h);
+                rectMode(CENTER);
+                fill(color("white"));
+                rect(size.w / 2, size.h / 2, 200, 200, 20);
+                fill(color("black"));
+                rect(size.w / 2 - 25, size.h / 2, 25, 75);
+                fill(color("black"));
+                rect(size.w / 2 + 25, size.h / 2, 25, 75);
             pop();
         }
     
@@ -78,20 +162,20 @@ class GameScene extends Scene {
             socket.emit("downkey");
         }
     
-        if (this.debug) {
+        if (debug) {
             for (let i = 0; i < this.collisionList.length; i++) {
                 //Show Collider
-                a = this.collisionList[i];
-                push();
-                fill(color("red"));
-                noStroke();
-                rect(a.pos.x, a.pos.y, a.width, a.height);
+                let a = this.collisionList[i];
+                    push();
+                    fill(color("red"));
+                    noStroke();
+                    rect(a.pos.x, a.pos.y, a.width, a.height);
                 pop();
             }
         }
     }
 
-    keyPressed(key){    
+    keyPressed(key){
         if (key == "p") socket.emit("pause");
         if (key == "r") socket.emit("ready");
     }

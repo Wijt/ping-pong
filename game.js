@@ -107,11 +107,11 @@ class Room {
         
         this.ball = null;
 
-        this.gameState = "not started";
+        this.canStart = false;
+        this.started = false;
         this.gamePaused = false;
 
         this.collisionList = [];
-        this.canStart = false;
     }
 
     //add player if there is a room for it
@@ -124,17 +124,18 @@ class Room {
     }
 
     start() {
-        Object.values(this.players)[0].pos = {x: this.size.w * 0.1, y: this.size.h / 2 - 250 / 2};
+        //this positions should be place with CORNER mode
         Object.values(this.players)[0].height = this.size.h * 0.20;
+        Object.values(this.players)[0].pos = {x: this.size.w * 0.1 - (Object.values(this.players)[0].width / 2), y: this.size.h * 0.5 - (Object.values(this.players)[0].height/2)};
         Object.values(this.players)[0].roomsize = this.size;
 
-        Object.values(this.players)[0].pos = {x: this.size.w - this.size.w * 0.1, y: this.size.h / 2 - 250 / 2};
-        Object.values(this.players)[0].height = this.size.h * 0.20;
-        Object.values(this.players)[0].roomsize = this.size;
+        Object.values(this.players)[1].height = this.size.h * 0.20;
+        Object.values(this.players)[1].pos = {x: this.size.w * 0.9- (Object.values(this.players)[1].width / 2), y: this.size.h * 0.5 - (Object.values(this.players)[1].height/2)};
+        Object.values(this.players)[1].roomsize = this.size;
 
         this.ball = new Ball(
-            this.size.w / 2,
-            this.size.h / 2,
+            this.size.w * 0.5,
+            this.size.h * 0.5,
             20,
             13,
             "#B3F2F2"
@@ -142,7 +143,7 @@ class Room {
 
         this.collisionList = [
             {
-                pos: Object.values(this.players)[0].pos,
+                pos: Object.values(this.players)[0].pos, //this should be like that otherwise it will hard copy the object and not update
                 width: Object.values(this.players)[0].width,
                 height: Object.values(this.players)[0].height,
                 hitEffect: (ball) => {
@@ -226,11 +227,11 @@ class Room {
             },
         ];
         this.shootBall(Math.random() < 0.5 ? -1 : 1);
-        this.gameState = "started";
+        this.started = true;
     }
 
     update() {
-        if (this.gameState == "not started") {
+        if (!this.started) {
             if (Object.keys(this.players).length == 2) {
                 if (
                     Object.values(this.players)[0].ready &&
@@ -253,18 +254,19 @@ class Room {
                 : Object.values(this.players)[1];
         */
         this.ball.pos = {
-            x: this.size.w / 2 + direction * 300,
-            y: this.size.h / 2,
+            x: this.size.w * 0.5 + direction * (this.size.w * 0.1),
+            y: this.size.h * 0.5,
         };
         this.ball.vel = { x: this.ball.speed * direction, y: 0 };
     }
 
     restart() {
-        Object.values(this.players)[0].pos.x = this.size.w * 0.1;
-        Object.values(this.players)[0].pos.y = this.size.h / 2 - 250 / 2;
-
-        Object.values(this.players)[1].pos.x = this.size.w - this.size.w * 0.1;
-        Object.values(this.players)[1].pos.y = this.size.h / 2 - 250 / 2;
+        //this positions should be place with CORNER mode and it should be shollow copy
+        Object.values(this.players)[0].pos.x = this.size.w * 0.1 - Object.values(this.players)[0].width / 2;
+        Object.values(this.players)[0].pos.y = this.size.h * 0.5 - Object.values(this.players)[0].height / 2;
+        
+        Object.values(this.players)[1].pos.x = this.size.w * 0.9 - Object.values(this.players)[1].width / 2;
+        Object.values(this.players)[1].pos.y = this.size.h * 0.5 - Object.values(this.players)[1].height / 2;
     }
 }
 
