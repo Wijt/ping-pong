@@ -26,16 +26,16 @@ instrument(io, {
 });
 
 const { makeid } = require("./useful.js");
+const { Console } = require("console");
 
 var rooms = {};
 
 setInterval(() => {
     for (k in rooms) {
-        if(rooms[k].canStart){
-            if(rooms[k].started)
-            rooms[k].update();
-            io.to(rooms[k].id).emit("sync", rooms[k]);
-        }
+        if(!rooms[k].canStart) continue;
+
+        rooms[k].update();
+        io.to(rooms[k].id).emit("sync", rooms[k]);
     }
 }, 10);
 
@@ -83,11 +83,13 @@ io.on("connection", (socket) => {
     });
     
     function calcBestSceneSize(roomid){
-        var w = 0;
-        var h = 0;
-        for(k in Object.values(rooms[roomid].playerSizes)){
-            if(k.w > w) w = k.w;
-            if(k.h > h) h = k.h;
+        var w = 9999;
+        var h = 9999;
+        for(k in rooms[roomid].playerSizes){
+            k = rooms[roomid].playerSizes[k];
+            console.log("k", k);
+            if(k.w < w) w = k.w;
+            if(k.h < h) h = k.h;
         }
         return {w: w, h: h};
     }
@@ -99,6 +101,7 @@ io.on("connection", (socket) => {
             var bestSize = calcBestSceneSize(socket.roomid);
             io.to(socket.roomid).emit("start-game", bestSize);
             rooms[socket.roomid].size = bestSize;
+            rooms[socket.roomid].canStart = true;
         }
 
     });

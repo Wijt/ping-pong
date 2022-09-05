@@ -1,30 +1,11 @@
 var socket;
 
-var debug = true;
+var debug = false;
 
 var sceneManager;
+var center;
 
 function preload() {
-
-    /* //get roomid and join it if that is not defined ask id to the server and join it;
-    var roomid = getAllUrlParams().roomid;
-
-    if (roomid == null) {
-        
-    } else {
-        socket.emit("join-room", roomid, {w: innerWidth, h: innerHeight});
-        ctx["isAdmin"] = false;
-    } */
-
-    /*socket.on("sync", (room) => {
-        sync(room);
-    });*/
-
-    /*socket.on("start-game", (room) => {
-        startGame(room);
-    });*/
-
-
     //setup socket io
     //setup all scenes
     socket = io();
@@ -36,20 +17,16 @@ function preload() {
     sceneManager.addScene(new GameScene());
 }
 
-function centerCanvas(C) {
-    let x = (innerWidth - width) / 2;
-    let y = (innerHeight - height) / 2;
-    C.position(x, y);
-}
-
 function setup() {
-    //create canvas and center it
+    //create canvas
     //start the scene manager
+    //initilize the center variable
 
-    let c = createCanvas(innerWidth, innerHeight);
-    centerCanvas(c);
+    createCanvas(innerWidth, innerHeight);
     
     sceneManager.start();
+
+    center = {x: width / 2, y: height / 2};
 }
 
 
