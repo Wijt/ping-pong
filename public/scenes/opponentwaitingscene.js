@@ -18,7 +18,8 @@ class OpponentWaiting extends Scene {
     draw(){
         background(0);
         fill(255);
-        text("Waiting for opponent", center.x, center.y);
-        text("Share your room id (" + this.sceneManager.ctx["room-id"] + ") with your friends!", center.x, center.y - 50);
+        textAlign(CENTER, CENTER);
+        textSize(45);
+        text("Waiting for opponent\nShare your link with your friends!", center.x, center.y);
     }
 }

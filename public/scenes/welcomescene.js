@@ -14,14 +14,12 @@ class WelcomeScene extends Scene {
         }
     }
 
-    update(){
-        super.update();
-    }
-
     draw(){
         background(0);
         fill(255);
-        text("Welcome to Ping-Pong", center.x, center.y);
+        textAlign(CENTER, CENTER);
+        textSize(45);
+        text("Welcome to Ping-Pong\n (C) create game\n(J) join game", center.x, center.y);
     }
 
     keyPressed(key){

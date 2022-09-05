@@ -16,7 +16,7 @@ class GameScene extends Scene {
     }
 
     start(){
-        let size = this.sceneManager.ctx["room-size"];
+        var size = this.sceneManager.ctx["room-size"];
 
         this.court = new Court(size.w * 0.5, size.h * 0.5, size.w*0.01, size.h*0.8, "#ffffff");
 
@@ -32,57 +32,55 @@ class GameScene extends Scene {
             83,
             10
         );
+        console.log(this.playerOne);
         this.playerTwo = new Player(
-            size.h * 0.20,
+            size.h * 0.2,
             20,
             size.w * 0.9,
             size.h * 0.5,
-            "#000000",
+            "#ffffff",
             38,
             40,
             10
         );
-
+        console.log(this.playerTwo);
         socket.on("sync", (room) => {
             this.sync(room);
         });
     }
 
     sync(r) {
-        if (r.ball != null) {
-            this.ball.pos = r.ball.pos;
-            this.ball.vel = r.ball.vel;
-        }
+        this.isPlayerOneReady = Object.values(r.players)[0].ready;
+        this.isPlayerTwoReady = Object.values(r.players)[1].ready;
+
+        //this guard clause guarantees that server initialized all the gameobjects for this room                                                                                                                    "1"
+        if (!r.started) return;
+
+        this.ball.pos = r.ball.pos;
+        this.ball.vel = r.ball.vel;
 
         //server works with CORNER mode so we need to convert it to CENTER mode
+
+        //player one position
         this.playerOne.pos = Object.values(r.players)[0].pos;
         this.playerOne.pos.x += this.playerOne.width / 2;
         this.playerOne.pos.y += this.playerOne.height / 2;
-
+        //player two position
+        this.playerTwo.pos = Object.values(r.players)[1].pos;
+        this.playerTwo.pos.x += this.playerTwo.width / 2;
+        this.playerTwo.pos.y += this.playerTwo.height / 2;
+        //players score
+        this.playerTwo.score = Object.values(r.players)[1].score;
         this.playerOne.score = Object.values(r.players)[0].score;
-        this.isPlayerOneReady = Object.values(r.players)[0].ready;
-    
-        if (Object.values(r.players)[1] != null) {
-            this.playerTwo.pos = Object.values(r.players)[1].pos;
-            this.playerTwo.pos.x += this.playerTwo.width / 2;
-            this.playerTwo.pos.y += this.playerTwo.height / 2;
-
-            this.playerTwo.score = Object.values(r.players)[1].score;
-            this.isPlayerTwoReady = Object.values(r.players)[1].ready;
-        }
     
         this.gamePaused = r.gamePaused;
         this.collisionList = r.collisionList;
 
     }
 
-    update(){
-        super.update();
-
-    }
-
     draw(){
         background(color("#0A1119"));
+        noStroke();
 
         let size = this.sceneManager.ctx["room-size"];
 
@@ -90,13 +88,10 @@ class GameScene extends Scene {
         //in the server, there is no center point only common point is the 0,0
         translate(center.x - size.w / 2, center.y - size.h / 2);
 
-       /*  if(debug){
-            push();
-                fill(color("#f21827"));
-                //stroke(color("#f21827"));
-                rect(0, 0, size.w, size.h);
-            pop();
-        } */
+        push();
+            fill(color("#111E2C"));
+            rect(0, 0, size.w, size.h);
+        pop();
 
         this.court.show();
         this.ball.show();
@@ -113,7 +108,6 @@ class GameScene extends Scene {
 
         if (!this.isPlayerOneReady) {
             push();
-            noStroke();
             rectMode(CENTER);
             fill(0, 0, 0, 200);
             rect(size.w * 0.25, size.h / 2, size.w / 2, size.h);
@@ -125,7 +119,6 @@ class GameScene extends Scene {
         }
         if (!this.isPlayerTwoReady) {
             push();
-            noStroke();
             rectMode(CENTER);
             fill(0, 0, 0, 200);
             rect(size.w * 0.75, size.h / 2, size.w / 2, size.h);

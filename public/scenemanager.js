@@ -21,7 +21,9 @@ class SceneManager{
     }
 
     draw(){
-        this.getActiveScene().draw();
+        push(); //this push and pop functions perfent the scene from changing the global settings
+            this.getActiveScene().draw();
+        pop();
     }
 
     keyPressed(key){
