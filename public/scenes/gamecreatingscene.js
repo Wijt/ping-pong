@@ -7,15 +7,10 @@ class GameCreating extends Scene {
         super.start();
 
         socket.emit("my-size", {w: innerWidth, h: innerHeight});
-        console.log("my size sent", {w: innerWidth, h: innerHeight});
-
         socket.on("start-game", (roomSize) => {
-            console.log("gelen bu abi: ", roomSize);
             this.sceneManager.ctx["room-size"] = roomSize;
-            console.log("room size", roomSize);
             this.sceneManager.openScene(3);
         });
-
     }
 
     update(){
@@ -25,6 +20,6 @@ class GameCreating extends Scene {
     draw(){
         background(0);
         fill(255);
-        text("Creating game", innerWidth/2, innerHeight/2);
+        text("Creating game", center.x, center.y);
     }
 }

@@ -9,7 +9,7 @@ class Ball {
         this.waitFor = null;
     }
 
-    show(){
+    show() {
         push();
             rectMode(CENTER);
             fill(color(this.color));
@@ -17,9 +17,12 @@ class Ball {
         pop();
     }
 
-    update(collisionList){
-        if(this.waitFor) {
-            if(keyIsDown(this.waitFor.upKey)||keyIsDown(this.waitFor.downKey)) {
+    update(collisionList) {
+        if (this.waitFor) {
+            if (
+                keyIsDown(this.waitFor.upKey) ||
+                keyIsDown(this.waitFor.downKey)
+            ) {
                 this.waitFor = null;
             }
             return;
@@ -31,7 +34,17 @@ class Ball {
     collide(others) {
         for (let i = 0; i < others.length; i++) {
             let o = others[i];
-            if (circRect(this.pos.x,this.pos.y,this.radius,o.pos.x,o.pos.y,o.width,o.height)) {
+            if (
+                circRect(
+                    this.pos.x,
+                    this.pos.y,
+                    this.radius,
+                    o.pos.x,
+                    o.pos.y,
+                    o.width,
+                    o.height
+                )
+            ) {
                 o.hitEffect(this);
             }
         }
@@ -41,14 +54,14 @@ class Ball {
 function circRect(cx, cy, rad, rx, ry, rw, rh) {
     let testX = cx;
     let testY = cy;
-    
-    if (cx < rx)         testX = rx;      // test left edge
-    else if (cx > rx+rw) testX = rx+rw;   // right edge
-    if (cy < ry)         testY = ry;      // top edge
-    else if (cy > ry+rh) testY = ry+rh;   // bottom edge
-    
+
+    if (cx < rx) testX = rx; // test left edge
+    else if (cx > rx + rw) testX = rx + rw; // right edge
+    if (cy < ry) testY = ry; // top edge
+    else if (cy > ry + rh) testY = ry + rh; // bottom edge
+
     let d = dist(cx, cy, testX, testY);
-    //circle(testX,testY,10)
+
     if (d < rad) {
         return true;
     }

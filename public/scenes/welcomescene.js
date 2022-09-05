@@ -21,7 +21,7 @@ class WelcomeScene extends Scene {
     draw(){
         background(0);
         fill(255);
-        text("Welcome to Ping-Pong", innerWidth/2, innerHeight/2);
+        text("Welcome to Ping-Pong", center.x, center.y);
     }
 
     keyPressed(key){
@@ -38,17 +38,7 @@ class WelcomeScene extends Scene {
         }
     }
 
-    //this function create a new room
     createRoom(){
-        /* 
-        socket.on("set-id", (id) => {
-            roomid = id;
-            socket.emit("join-room", roomid, {w: innerWidth, h: innerHeight});
-            window.history.pushState("", "", `?roomid=${roomid}`);
-            console.log("room created " + roomid);
-        });
-        this.sceneManager.ctx["isAdmin"] = true; */
-        
         socket.emit("create-room");
         socket.on("room-created", (roomid) => {
             window.history.pushState("", "", `?roomid=${roomid}`);

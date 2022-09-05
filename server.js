@@ -40,7 +40,7 @@ setInterval(() => {
 }, 10);
 
 io.on("connection", (socket) => {
-    console.log("a user connected " + socket.id);
+    //console.log("a user connected " + socket.id);
 
     socket.on("create-room", () => {
 
@@ -54,32 +54,22 @@ io.on("connection", (socket) => {
         socket.join(roomid);
         io.to(socket.id).emit("room-created", roomid);
 
-        console.log("created and joined to the room " + roomid);
+        //console.log("created and joined to the room " + roomid);
 
     });
 
     socket.on("join-room", (roomid) => {
         if(rooms[roomid]){
+            //TODO: Check if the room is full and if full make that person spectate
             rooms[roomid].addPlayer(new Player(socket.id));
             socket.roomid = roomid;
             socket.join(roomid);
             
-            //get founder id from players dictionary
             var founderId = Object.keys(rooms[roomid].players)[0];
-            console.log("Geldi knk haberin olsun ", founderId);
             io.to(founderId).emit("opponent-connected");
-            console.log("joined to the room " + roomid);
+            //console.log("joined to the room " + roomid);
             socket.emit("room-joined", roomid);
         }
-       /*  if (result) {
-            if(Object.keys(rooms[socket.roomid].players).length==2) rooms[socket.roomid].canStart = true; 
-            return true;
-        } else {
-            console.warn(
-                "there is already two players inside this room: " + roomid
-            );
-            return false;
-        }        */
     });
     
     function calcBestSceneSize(roomid){
