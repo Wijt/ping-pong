@@ -1,7 +1,6 @@
 class OpponentWaiting extends Scene {
-    constructor(ctx){
+    constructor(){
         super();
-        this.ctx = ctx;
     }
 
     start(){
@@ -19,7 +18,7 @@ class OpponentWaiting extends Scene {
     draw(){
         background(0);
         fill(255);
-        text("Waiting for opponent", innerWidth/2, innerHeight/2);
-        text("Share your room id (" + this.sceneManager.ctx["room-id"] + ") with your friends!", innerWidth/2, (innerHeight/2) - 50);
+        text("Waiting for opponent", center.x, center.y);
+        text("Share your room id (" + this.sceneManager.ctx["room-id"] + ") with your friends!", center.x, center.y - 50);
     }
 }

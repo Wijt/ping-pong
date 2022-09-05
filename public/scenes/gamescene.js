@@ -55,7 +55,6 @@ class GameScene extends Scene {
         }
 
         //server works with CORNER mode so we need to convert it to CENTER mode
-
         this.playerOne.pos = Object.values(r.players)[0].pos;
         this.playerOne.pos.x += this.playerOne.width / 2;
         this.playerOne.pos.y += this.playerOne.height / 2;
@@ -67,7 +66,7 @@ class GameScene extends Scene {
             this.playerTwo.pos = Object.values(r.players)[1].pos;
             this.playerTwo.pos.x += this.playerTwo.width / 2;
             this.playerTwo.pos.y += this.playerTwo.height / 2;
-            
+
             this.playerTwo.score = Object.values(r.players)[1].score;
             this.isPlayerTwoReady = Object.values(r.players)[1].ready;
         }
@@ -75,7 +74,6 @@ class GameScene extends Scene {
         this.gamePaused = r.gamePaused;
         this.collisionList = r.collisionList;
 
-        //console.log(r);
     }
 
     update(){
