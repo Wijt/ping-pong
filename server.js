@@ -26,7 +26,6 @@ instrument(io, {
 });
 
 const { makeid } = require("./useful.js");
-const { Console } = require("console");
 
 var rooms = {};
 
@@ -77,7 +76,6 @@ io.on("connection", (socket) => {
         var h = 9999;
         for(k in rooms[roomid].playerSizes){
             k = rooms[roomid].playerSizes[k];
-            console.log("k", k);
             if(k.w < w) w = k.w;
             if(k.h < h) h = k.h;
         }

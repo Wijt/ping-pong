@@ -22,21 +22,6 @@ class Player {
     }
 
     update(){
-        var playerTop = this.pos.y + this.height/2;
-        var topY = innerHeight/2 - sceneManager.ctx["room-size"].h/2;
-
-        var playerBottom = this.pos.y + this.height/2;
-        var bottomY = sceneManager.ctx["room-size"].h;
-        
-        if(playerTop > topY){
-            if(keyIsDown(this.upKey)){
-                this.pos.y -= this.speed;
-            }
-        }
-        if(playerBottom < bottomY){
-            if(keyIsDown(this.downKey)){
-                this.pos.y += this.speed;
-            }
-        }
+        //No need for a update function, since the player update works on server
     }
   }
