@@ -9,7 +9,7 @@ class GameCreating extends Scene {
         socket.emit("my-size", {w: innerWidth, h: innerHeight});
         socket.on("start-game", (roomSize) => {
             this.sceneManager.ctx["room-size"] = roomSize;
-            this.sceneManager.openScene(3);
+            this.sceneManager.openScene(SCENE_GAME);
         });
     }
 
