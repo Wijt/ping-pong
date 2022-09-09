@@ -10,7 +10,7 @@ class WelcomeScene extends Scene {
 
         if(urlParams.has("roomid")){
             let roomid = urlParams.get("roomid");
-            this.joinRoom(roomid);
+            this.sceneManager.scenes[SCENE_JOIN_ROOM].joinRoom(roomid);
         }
     }
 
@@ -32,7 +32,7 @@ class WelcomeScene extends Scene {
             this.createRoom();
         }
         else if(key == "j"){
-            console.log("join room");
+            this.openJoinRoom();
         }
     }
 
@@ -44,20 +44,12 @@ class WelcomeScene extends Scene {
             this.sceneManager.ctx["room-id"] = roomid;
             this.sceneManager.ctx["founder"] = true;
 
-            this.sceneManager.openScene(1);
+            this.sceneManager.openScene(SCENE_OPPONENT_WAITING);
         });
     }
 
-    joinRoom(roomid){
-        socket.emit("join-room", roomid);
-        socket.on("room-joined", (roomid) => {
-            window.history.pushState("", "", `?roomid=${roomid}`);
-            console.log("room joined " + roomid);
-            this.sceneManager.ctx["room-id"] = roomid;
-            this.sceneManager.ctx["founder"] = false;
-
-            this.sceneManager.openScene(2);
-        });
+    openJoinRoom(){
+        this.sceneManager.openScene(SCENE_JOIN_ROOM);
     }
     
     exit(){

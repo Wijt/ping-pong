@@ -7,12 +7,8 @@ class OpponentWaiting extends Scene {
         super.start();
 
         socket.on("opponent-connected", () => {
-            this.sceneManager.openScene(2);
+            this.sceneManager.openScene(SCENE_GAME_CREATING);
         });
-    }
-
-    update(){
-        super.update();
     }
     
     draw(){
