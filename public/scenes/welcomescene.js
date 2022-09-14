@@ -10,7 +10,7 @@ class WelcomeScene extends Scene {
 
         if(urlParams.has("roomid")){
             let roomid = urlParams.get("roomid");
-            this.sceneManager.scenes[SCENE_JOIN_ROOM].joinRoom(roomid);
+            this.sceneManager.scenes[SCENE_JOIN_ROOM].wantToJoin(roomid);
         }
     }
 
