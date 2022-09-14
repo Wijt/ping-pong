@@ -17,7 +17,7 @@ const io = new Server(httpServer, {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-httpServer.listen(3000, () => {
+httpServer.listen(process.env.PORT || 3000, () => {
     console.log("listening on *:3000");
 });
 
