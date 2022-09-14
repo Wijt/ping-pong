@@ -32,14 +32,14 @@ class JoinRoomScene extends Scene {
         this.button.position(center.x + 60, center.y);
         this.button.size(50, 40);
         this.button.mousePressed(() => {
-            var roomid = trim(this.input.value());
-            if (roomid.length != 5) return;
-
             this.wantToJoin(roomid);
         });
     }
 
     wantToJoin(roomid){
+        var roomid = trim(roomid);
+        if (roomid.length != 5) return;
+        
         socket.emit("join-room", roomid);
     }
 
