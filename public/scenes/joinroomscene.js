@@ -3,6 +3,7 @@ class JoinRoomScene extends Scene {
         super();
         this.button;
         this.input;
+        this.returnButton;
 
         this.roomid;
     }
