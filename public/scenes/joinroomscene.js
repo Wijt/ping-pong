@@ -10,8 +10,6 @@ class JoinRoomScene extends Scene {
     start(){
         super.start();
 
-        if (this.roomid) this.wantToJoin(this.roomid);
-
         socket.on("opponent-connected", () => {
             this.sceneManager.openScene(2);
         });
@@ -24,6 +22,12 @@ class JoinRoomScene extends Scene {
 
             this.sceneManager.openScene(SCENE_GAME_CREATING);
         });
+
+        
+        if (this.roomid){
+            this.wantToJoin(this.roomid);
+            return;
+        } 
 
         //create a button and a text input for the user to enter the room id
         //then if click the button call the joinRoom function with the room id
