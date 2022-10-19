@@ -43,6 +43,14 @@ class JoinRoomScene extends Scene {
             var roomid = trim(this.input.value());
             this.wantToJoin(roomid);
         });
+
+        this.returnButton = createButton("Return to Menu");
+        this.returnButton.position(center.x-75, center.y + 100);
+        this.returnButton.size(150, 40);
+        this.returnButton.mousePressed(() => {
+            this.sceneManager.openScene(SCENE_WELCOME);
+        });
+
     }
 
     wantToJoin(roomid){
@@ -62,7 +70,11 @@ class JoinRoomScene extends Scene {
 
     exit(){
         super.exit();
-        this.button.remove();
-        this.input.remove();
+
+        [this.button, this.input, this.returnButton].forEach(
+            e => {
+                if (e) e.remove();
+            }
+        );
     }
 }
