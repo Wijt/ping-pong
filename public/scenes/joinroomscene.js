@@ -3,14 +3,13 @@ class JoinRoomScene extends Scene {
         super();
         this.button;
         this.input;
+        this.returnButton;
 
         this.roomid;
     }
 
     start(){
         super.start();
-
-        if (this.roomid) this.wantToJoin(this.roomid);
 
         socket.on("opponent-connected", () => {
             this.sceneManager.openScene(2);
@@ -24,6 +23,12 @@ class JoinRoomScene extends Scene {
 
             this.sceneManager.openScene(SCENE_GAME_CREATING);
         });
+
+        
+        if (this.roomid){
+            this.wantToJoin(this.roomid);
+            return;
+        } 
 
         //create a button and a text input for the user to enter the room id
         //then if click the button call the joinRoom function with the room id
@@ -39,6 +44,14 @@ class JoinRoomScene extends Scene {
             var roomid = trim(this.input.value());
             this.wantToJoin(roomid);
         });
+
+        this.returnButton = createButton("Return to Menu");
+        this.returnButton.position(center.x-75, center.y + 100);
+        this.returnButton.size(150, 40);
+        this.returnButton.mousePressed(() => {
+            this.sceneManager.openScene(SCENE_WELCOME);
+        });
+
     }
 
     wantToJoin(roomid){
@@ -58,7 +71,11 @@ class JoinRoomScene extends Scene {
 
     exit(){
         super.exit();
-        this.button.remove();
-        this.input.remove();
+
+        [this.button, this.input, this.returnButton].forEach(
+            e => {
+                if (e) e.remove();
+            }
+        );
     }
 }
