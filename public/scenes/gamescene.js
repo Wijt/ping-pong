@@ -83,7 +83,6 @@ class GameScene extends Scene {
         noStroke();
 
         let size = this.sceneManager.ctx["room-size"];
-
         //this makes the game room centered
         //in the server, there is no center point only common point is the 0,0
         translate(center.x - size.w / 2, center.y - size.h / 2);
@@ -106,6 +105,14 @@ class GameScene extends Scene {
             text(this.playerTwo.score, size.w * 0.75, size.h * 0.2);
         pop();
 
+        push();
+            fill(color("white"));
+            textSize(20);
+            textAlign(CENTER, CENTER);
+            text("press P to pause/play", size.w * 0.5, size.h * 0.95);
+        pop();
+
+
         if (!this.isPlayerOneReady) {
             push();
             rectMode(CENTER);
@@ -117,6 +124,7 @@ class GameScene extends Scene {
             text("press\nR\nto be ready",  size.w * 0.25, size.h / 2);
             pop();
         }
+
         if (!this.isPlayerTwoReady) {
             push();
             rectMode(CENTER);
