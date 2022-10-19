@@ -24,6 +24,6 @@ class Scene{
     }
 
     exit(){
-
+        this.started = false;
     }
 }
