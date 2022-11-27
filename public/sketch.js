@@ -23,6 +23,15 @@ function preload() {
     sceneManager.addScene(new JoinRoomScene());
     sceneManager.addScene(new GameCreating());
     sceneManager.addScene(new GameScene());
+    
+    setInterval(() => {
+        const start = Date.now();
+      
+        socket.emit("ping", () => {
+          const duration = Date.now() - start;
+          console.log(duration);
+        });
+    }, 1000);
 }
 
 function setup() {
