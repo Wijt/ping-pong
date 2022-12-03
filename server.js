@@ -41,6 +41,10 @@ setInterval(() => {
 io.on("connection", (socket) => {
     //console.log("a user connected " + socket.id);
 
+    socket.on("ping", (callback) => {
+        callback();
+    });
+
     socket.on("create-room", () => {
 
         var roomid = makeid(5);

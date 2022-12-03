@@ -104,6 +104,9 @@ class Room {
         this.players = {};
         this.playerSizes = {};
         this.size = { w: 0, h: 0 };
+
+		this.waitTimeAfterGoal = 3;
+		this.waitTimer = 3;
         
         this.ball = null;
 
@@ -257,8 +260,25 @@ class Room {
             x: this.size.w * 0.5 + direction * (this.size.w * 0.1),
             y: this.size.h * 0.5,
         };
-        this.ball.vel = { x: this.ball.speed * direction, y: 0 };
-    }
+
+		//wait for 3 seconds before shooting the ball
+		this.waitTimer = this.waitTimeAfterGoal;
+		this.ball.vel = { x: 0, y: 0 };
+
+		//wait untill waitTimer becomes 0 and if game is paused then dont decrease the timer
+		let waitInterval = setInterval(() => {
+			if (this.waitTimer <= 0) {
+				clearInterval(waitInterval);
+				this.ball.vel = {
+					x: direction * this.ball.speed,
+					y: 0,
+				};
+				this.waitTimer = 0;
+			} else {
+				if (!this.gamePaused) this.waitTimer--;
+			}
+		}, 1000);
+	}
 
     restart() {
         //this positions should be place with CORNER mode and it should be shollow copy

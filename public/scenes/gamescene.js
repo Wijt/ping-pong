@@ -13,6 +13,8 @@ class GameScene extends Scene {
         this.gamePaused = false;
 
         this.collisionList = [];
+
+		this.waitTimer = 0;
     }
 
     start(){
@@ -76,6 +78,8 @@ class GameScene extends Scene {
         this.gamePaused = r.gamePaused;
         this.collisionList = r.collisionList;
 
+		this.waitTimer = r.waitTimer;
+
     }
 
     draw(){
@@ -135,6 +139,18 @@ class GameScene extends Scene {
             fill(color("white"));
             text("press\nR\nto be ready", size.w * 0.75, size.h / 2);
             pop();
+        }
+
+		if (this.waitTimer != 0) {
+            push();
+                rectMode(CORNER);
+                fill(0, 0, 0, 200);
+                rect(0, 0, size.w, size.h);
+				fill(color("white"));
+				textAlign(CENTER, CENTER);
+				textSize(100);
+				text(this.waitTimer, size.w / 2, size.h / 2);
+			pop();
         }
 
         if (this.gamePaused) {
