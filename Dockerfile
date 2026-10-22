@@ -1,5 +1,5 @@
-# Use Node.js 16 Alpine version for a small footprint, matching the package.json engine requirement
-FROM node:16-alpine
+# Node.js 22 LTS, patched for the October 2026 security release (>= 22.23.4)
+FROM node:22.23.4-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
